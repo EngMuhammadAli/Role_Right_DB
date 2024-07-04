@@ -1,0 +1,54 @@
+﻿@model WebApplication14.Models.GetPermissionsViewModel
+
+@{
+    ViewData["Title"] = "Get Permissions";
+}
+
+<h2>Get Permissions</h2>
+
+<form asp-action="Index" asp-controller="Permissions" method="get">
+    <div class="form-group">
+        <label for="Role">Role</label>
+        <select asp-for="SelectedRole" asp-items="@(new SelectList(Model.Roles, "Name", "Name"))" class="form-control" onchange="this.form.submit()"></select>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Form Name</th>
+            <th>Can Create</th>
+            <th>Can Read</th>
+            <th>Can Update</th>
+            <th>Can Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (var i = 0; i < Model.Forms.Count; i++)
+        {
+            var form = Model.Forms[i];
+            var permission = Model.Permissions.FirstOrDefault(p => p.FormName == form.FormName) ?? new WebApplication14.Models.Permission { FormName = form.FormName };
+
+            <tr>
+                <td>
+                    @Html.HiddenFor(m => m.Permissions[i].FormName, new { @Value = form.FormName })
+                    @Html.HiddenFor(m => m.Permissions[i].RoleName, new { @Value = Model.SelectedRole })
+                    @form.FormName
+                </td>
+                <td>
+                    <input type="checkbox" asp-for="Permissions[i].CanCreate" checked="@permission.CanCreate" />
+                </td>
+                <td>
+                    <input type="checkbox" asp-for="Permissions[i].CanRead" checked="@permission.CanRead" />
+                </td>
+                <td>
+                    <input type="checkbox" asp-for="Permissions[i].CanUpdate" checked="@permission.CanUpdate" />
+                </td>
+                <td>
+                    <input type="checkbox" asp-for="Permissions[i].CanDelete" checked="@permission.CanDelete" />
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<button type="submit" class="btn btn-primary">Save Permissions</button>
